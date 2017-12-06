@@ -67,10 +67,11 @@ module tm1637(
 
         end else begin
             if (data_latch) begin
-                // segments have been latch
+                // data has been latch
                 write_byte <= data_byte;
                 write_stop_bit <= data_stop_bit;
 
+                // let's rock!
                 state = S_START;
                 busy <= 1;
 
