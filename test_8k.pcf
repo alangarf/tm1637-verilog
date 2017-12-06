@@ -1,0 +1,24 @@
+# For the iCE40HX-8K Breakout Board
+
+set_io clk J3
+
+set_io tm_scl D1
+set_io tm_sda D2
+
+set_io led0 B5
+set_io led1 B4
+set_io led2 A2
+set_io led3 A1
+set_io led4 C5
+set_io led5 C4
+set_io led6 B3
+set_io led7 C3
+
+#set_io led10 J1
+#set_io led11 J2
+#set_io led12 K1
+#set_io led13 K3
+#set_io led14 L1
+#set_io led15 L3
+#set_io led16 M1
+#set_io led17 M2
