@@ -2,8 +2,8 @@
 
 set_io clk J3
 
-set_io tm_scl D1
-set_io tm_sda D2
+set_io tm_scl P1
+set_io tm_sda P2
 
 set_io led0 B5
 set_io led1 B4

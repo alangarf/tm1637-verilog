@@ -1,25 +1,38 @@
 module tm1637(
-    input clk,
-    input rst,
+    clk,
+    rst,
 
-    input data_latch,
-    input [7:0] data_byte,
-    input data_stop_bit,
-    output busy,
+    data_latch,
+     data_byte,
+    data_stop_bit,
+    busy,
 
-    output scl_en,
-    output scl_out,
+    scl_en,
+    scl_out,
 
-    output sda_en,
-    output sda_out,
-    input sda_in
+    sda_en,
+    sda_out,
+    sda_in
     );
+
+    input clk;
+    input rst;
+    input data_latch;
+    input [7:0] data_byte;
+    input data_stop_bit;
+    input sda_in;
+
+    output reg busy;
+    output reg scl_en;
+    output reg scl_out;
+    output reg sda_en;
+    output reg sda_out;
 
     reg [7:0] write_byte;
     reg [2:0] write_bit_count;
     reg write_stop_bit;
 
-    reg [3:0] state;
+    reg [3:0] cur_state;
     reg [3:0] next_state;
 
     reg [9:0] wait_count;
@@ -40,8 +53,7 @@ module tm1637(
         S_STOP      = 4'hB,
         S_STOP1     = 4'hC,
         S_STOP2     = 4'hD,
-        S_STOP3     = 4'hE,
-        S_SPARE   = 4'hF;
+        S_STOP3     = 4'hE;
 
     always @(posedge clk) begin
         if (rst) begin
@@ -55,7 +67,7 @@ module tm1637(
             sda_en <= 0;
 
             // set up FSM
-            state <= S_IDLE;
+            cur_state <= S_IDLE;
             next_state <= S_IDLE;
 
             wait_count <= 0;
@@ -71,11 +83,11 @@ module tm1637(
                 write_stop_bit <= data_stop_bit;
 
                 // let's rock!
-                state <= S_START;
+                cur_state <= S_START;
                 busy <= 1;
 
             end else begin
-                case (state)
+                case (cur_state)
                     S_IDLE: begin
                         // idle waiting for a latch
                         scl_en <= 0;
@@ -86,7 +98,7 @@ module tm1637(
                     S_WAIT: begin
                         // setting up for a wait
                         wait_count <= 0;
-                        state <= S_WAIT1;
+                        cur_state <= S_WAIT1;
                     end
 
                     S_WAIT1: begin
@@ -94,14 +106,14 @@ module tm1637(
                         wait_count <= wait_count + 1;
 
                         if (wait_count == wait_time)
-                            state <= next_state;
+                            cur_state <= next_state;
                     end
 
                     S_START: begin
                         // send the start signal to the bus, then wait
                         sda_en <= 1;
 
-                        state <= S_WAIT;
+                        cur_state <= S_WAIT;
                         next_state <= S_WRITE;
                     end
 
@@ -112,7 +124,7 @@ module tm1637(
                         // reset the bit counts
                         write_bit_count <= 0;
 
-                        state <= S_WAIT;
+                        cur_state <= S_WAIT;
                         next_state <= S_WRITE1;
                     end
 
@@ -122,7 +134,7 @@ module tm1637(
                         // 0 to HiZ the bus and let pull up do the work
                         sda_en <= ~write_byte[write_bit_count];
 
-                        state <= S_WAIT;
+                        cur_state <= S_WAIT;
                         next_state <= S_WRITE2;
                     end
 
@@ -130,7 +142,7 @@ module tm1637(
                         // tock the clock
                         scl_en <= 0;
 
-                        state <= S_WAIT;
+                        cur_state <= S_WAIT;
                         next_state <= S_WRITE3;
                     end
 
@@ -141,13 +153,13 @@ module tm1637(
 
                             // tick the clock for the next bit
                             scl_en <= 1;
-                            state <= S_WRITE1;
+                            cur_state <= S_WRITE1;
 
                         end else begin
                             // all bits sent, tock the clock
                             scl_en <= 0;
 
-                            state <= S_WAIT;
+                            cur_state <= S_WAIT;
                             next_state <= S_ACK;
                         end
                     end
@@ -157,7 +169,7 @@ module tm1637(
                         scl_en <= 1;
                         sda_en <= 0;
 
-                        state <= S_WAIT;
+                        cur_state <= S_WAIT;
                         next_state <= S_ACK1;
                     end
 
@@ -165,7 +177,7 @@ module tm1637(
                         // tock the clock
                         scl_en <= 0;
 
-                        state <= S_WAIT;
+                        cur_state <= S_WAIT;
                         next_state <= S_ACK2;
                     end
 
@@ -174,7 +186,7 @@ module tm1637(
                         if (sda_in == 0)
                             sda_en <= 1;
 
-                        state <= S_WAIT;
+                        cur_state <= S_WAIT;
                         next_state <= write_stop_bit ? S_STOP : S_IDLE;
                     end
 
@@ -182,33 +194,33 @@ module tm1637(
                         // send stop signal
                         scl_en <= 1;
 
-                        state <= S_WAIT;
+                        cur_state <= S_WAIT;
                         next_state <= S_STOP1;
                     end
 
                     S_STOP1: begin
                         sda_en <= 1;
 
-                        state <= S_WAIT;
+                        cur_state <= S_WAIT;
                         next_state <= S_STOP2;
                     end
 
                     S_STOP2: begin
                         scl_en <= 0;
 
-                        state <= S_WAIT;
+                        cur_state <= S_WAIT;
                         next_state <= S_STOP3;
                     end
 
                     S_STOP3: begin
                         sda_en <= 0;
 
-                        state <= S_WAIT;
+                        cur_state <= S_WAIT;
                         next_state <= S_IDLE;
                     end
 
-                    S_SPARE: begin
-                        state <= S_IDLE;
+                    default: begin
+                        cur_state <= S_IDLE;
                     end
                 endcase
             end

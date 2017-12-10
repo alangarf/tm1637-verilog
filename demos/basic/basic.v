@@ -9,7 +9,7 @@ module top(
     output led4,
     output led5,
     output led6,
-    output led7,
+    output led7
     );
 
     // setup reset and counter registers
@@ -22,15 +22,13 @@ module top(
     // so have to define the SB_IO block manually
     reg scl_en;
     reg scl_out;
-    reg scl_in;
     SB_IO #(
         .PIN_TYPE(6'b101001),
         .PULLUP(1'b 0)
     ) tm_scl_io (
         .PACKAGE_PIN(tm_scl),
         .OUTPUT_ENABLE(scl_en),
-        .D_OUT_0(scl_out),
-        .D_IN_0(scl_in)
+        .D_OUT_0(scl_out)
     );
 
     reg sda_en;
@@ -74,10 +72,9 @@ module top(
 
         scl_en,
         scl_out,
-        scl_in,
         sda_en,
         sda_out,
-        sda_in,
+        sda_in
     );
 
     always @(posedge clk) begin
