@@ -1,4 +1,4 @@
-module hex(
+module decimal(
     clk,
     rst,
     data_latch,
@@ -14,7 +14,7 @@ module hex(
     input clk;
     input rst;
     input data_latch;
-    input [15:0] data_in;
+    input [13:0] data_in;
     input sda_in;
 
     output reg busy;
@@ -23,11 +23,26 @@ module hex(
     output wire sda_en;
     output wire sda_out;
 
-    reg [3:0] hex_in;
+    // convert binary to bcd
+    reg [3:0] thousands;
+    reg [3:0] hundreds;
+    reg [3:0] tens;
+    reg [3:0] ones;
+
+    bcd u_bcd (
+        data_in,
+        thousands,
+        hundreds,
+        tens,
+        ones
+    );
+
+    // take dec to digits
+    reg [3:0] dec_in;
     wire [6:0] seg_out;
 
-    hex_to_seg hex_disp (
-        hex_in,
+    dec_to_seg u_dec_to_seg (
+        dec_in,
         seg_out
     );
 
@@ -37,7 +52,7 @@ module hex(
     reg tm_stop_bit;
     wire tm_busy;
 
-    tm1637 disp (
+    tm1637 u_tm1637 (
         clk,
         rst,
 
@@ -106,8 +121,8 @@ module hex(
                     tm_stop_bit <= 0;
                     tm_latch <= 1;
 
-                    // load first digit into hex_to_seg
-                    hex_in <= data_in[15:12];
+                    // load first digit into dec_to_seg
+                    dec_in <= thousands;
 
                     cur_state <= S_LATCH;
                     next_state <= S_WRITE_HEX3;
@@ -118,8 +133,8 @@ module hex(
                     tm_stop_bit <= 0;
                     tm_latch <= 1;
 
-                    // load second digit into hex_to_seg
-                    hex_in <= data_in[11:8];
+                    // load second digit into dec_to_seg
+                    dec_in <= hundreds;
 
                     cur_state <= S_LATCH;
                     next_state <= S_WRITE_HEX2;
@@ -130,8 +145,8 @@ module hex(
                     tm_stop_bit <= 0;
                     tm_latch <= 1;
 
-                    // load second digit into hex_to_seg
-                    hex_in <= data_in[7:4];
+                    // load second digit into dec_to_seg
+                    dec_in <= tens;
 
                     cur_state <= S_LATCH;
                     next_state <= S_WRITE_HEX1;
@@ -142,8 +157,8 @@ module hex(
                     tm_stop_bit <= 0;
                     tm_latch <= 1;
 
-                    // load second digit into hex_to_seg
-                    hex_in <= data_in[3:0];
+                    // load second digit into dec_to_seg
+                    dec_in <= ones;
 
                     cur_state <= S_LATCH;
                     next_state <= S_WRITE_HEX0;
