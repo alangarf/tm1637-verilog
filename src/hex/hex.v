@@ -25,11 +25,11 @@ module hex(
     output wire sda_out;
 
     reg [3:0] hex_in;
-    wire [6:0] hex_out;
+    wire [6:0] seg_out;
 
     hex_to_seg hex_disp (
         hex_in,
-        hex_out
+        seg_out
     );
 
     // setup the tm1637 module and registers
@@ -81,6 +81,10 @@ module hex(
 
         end else if (busy && tm_busy == 0) begin
             case (cur_state)
+                S_IDLE: begin
+                    busy <= 0;
+                end
+
                 S_DATAMODE: begin
                     // | 0 | 1 | x | x | N | I | W | 0 |
                     // N = Normal mode (0), I = Address increment (0),
@@ -108,7 +112,7 @@ module hex(
                 end
 
                 S_WRITE_HEX3: begin
-                    tm_byte <= {1'd0, hex_out};
+                    tm_byte <= {1'd0, seg_out};
                     tm_stop_bit <= 0;
                     tm_latch <= 1;
 
@@ -120,7 +124,7 @@ module hex(
                 end
 
                 S_WRITE_HEX2: begin
-                    tm_byte <= {1'd0, hex_out};
+                    tm_byte <= {1'd0, seg_out};
                     tm_stop_bit <= 0;
                     tm_latch <= 1;
 
@@ -132,7 +136,7 @@ module hex(
                 end
 
                 S_WRITE_HEX1: begin
-                    tm_byte <= {1'd0, hex_out};
+                    tm_byte <= {1'd0, seg_out};
                     tm_stop_bit <= 0;
                     tm_latch <= 1;
 
@@ -144,7 +148,7 @@ module hex(
                 end
 
                 S_WRITE_HEX0: begin
-                    tm_byte <= {1'd0, hex_out};
+                    tm_byte <= {1'd0, seg_out};
                     tm_stop_bit <= 1;
                     tm_latch <= 1;
 
@@ -167,10 +171,6 @@ module hex(
                 S_LATCH: begin
                     tm_latch <= 0;
                     cur_state <= next_state;
-                end
-
-                S_IDLE: begin
-                    busy <= 0;
                 end
             endcase
         end
