@@ -41,6 +41,17 @@ module hex_tb;
         data_latch = 0;
 
         #450000
+        data_in = 16'hDEAF;
+        data_latch = 1;
+        #50
+        data_latch = 0;
+
+        #250000
+        data_in = 16'hFEED;
+        data_latch = 1;
+        #50
+        data_latch = 0;
+        #500000
         $finish;
     end
 

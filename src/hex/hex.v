@@ -75,7 +75,10 @@ module hex(
             busy <= 0;
 
         end else if (data_latch) begin
-            // check we're not busy, if not accept the new data
+            // if we're already busy, we will just interupt the
+            // current display sequence. The current command will
+            // be completed first, then the display will start
+            // receiving the new data that was freshly latched
             cur_state <= S_DATAMODE;
             busy <= 1;
 
