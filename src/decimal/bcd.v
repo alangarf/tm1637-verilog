@@ -270,7 +270,7 @@ module bcd(
 
     `endif
 
-    `ifdef BIT_14
+    `ifdef BITS_14
 /*
        1 1
        2 0 8 6 4 2 0
