@@ -1,3 +1,5 @@
 *.blif
 *.vvp
 *.vcd
+*.bin
+*.txt
