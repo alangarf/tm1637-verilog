@@ -4,7 +4,7 @@ module hex_tb;
     reg [15:0] data_in;
     reg data_latch;
 
-    wire busy, tm_busy, scl_en, scl_out, sda_en, sda_out;
+    wire busy, scl_en, scl_out, sda_en, sda_out;
     reg sda_in;
 
     hex u_hex (
@@ -17,8 +17,7 @@ module hex_tb;
         .scl_out    (scl_out),
         .sda_en     (sda_en),
         .sda_out    (sda_out),
-        .sda_in     (sda_in),
-        .tm_busy    (tm_busy)
+        .sda_in     (sda_in)
     );
 
     initial

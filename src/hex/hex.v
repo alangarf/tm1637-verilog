@@ -9,8 +9,7 @@ module hex(
     scl_out,
     sda_en,
     sda_out,
-    sda_in,
-    tm_busy
+    sda_in
     );
 
     input clk;
@@ -37,7 +36,7 @@ module hex(
     reg [7:0] tm_byte;
     reg tm_latch;
     reg tm_stop_bit;
-    output wire tm_busy;
+    wire tm_busy;
 
     tm1637 disp (
         clk,
