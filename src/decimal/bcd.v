@@ -316,7 +316,7 @@ module bcd(
     assign d8 = {c7[2:0],number[4]};
     assign d9 = {c8[2:0],number[3]};
     assign dA = {c9[2:0],number[2]};
-    assign dB = {c9[2:0],number[1]};
+    assign dB = {cA[2:0],number[1]};
 
     assign dC = {1'b0,c1[3],c2[3],c3[3]};
     assign dD = {cC[2:0],c4[3]};
