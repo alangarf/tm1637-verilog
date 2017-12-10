@@ -55,7 +55,7 @@ module top(
 
     // setup the tm1637 module and registers
     reg data_latch;
-    reg [15:0] data_in;
+    reg [13:0] data_in;
     reg busy;
 
     decimal u_decimal (
@@ -89,6 +89,8 @@ module top(
             data_latch <= 0;
 
         end
+
+        if (data_in > 14'h270F) data_in <= 0;
 
         counter <= counter + 1;
 
