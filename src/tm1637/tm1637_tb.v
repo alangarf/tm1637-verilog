@@ -7,9 +7,6 @@ module tm1637_tb;
     wire busy, scl_en, scl_out, sda_en, sda_out;
     reg sda_in;
 
-    wire [3:0] cur_state;
-    wire [3:0] next_state;
-
     tm1637 u_tm1637 (
         .clk            (clk),
         .rst            (rst),

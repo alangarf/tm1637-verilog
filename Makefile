@@ -19,7 +19,7 @@ demos: basic hex
 	$(ICEPACK) $^ $@
 
 %.vvp: %.v
-	sed -i '' 's?".*\.vcd"?"$(subst .vvp,.vcd,$@)"?' $(filter %_tb.v,$(^))
+	#sed -i '' 's?".*\.vcd"?"$(subst .vvp,.vcd,$@)"?' $(filter %_tb.v,$(^))
 	$(IVERILOG) -o $@ -s $(subst .vvp,,$(notdir $@)) $^
 %.vcd: %.vvp
 	$(VVP) $^ -lxt2
@@ -48,6 +48,10 @@ tm1637_tb: src/tm1637/tm1637_tb.vcd
 src/hex/hex_to_seg_tb.vvp: src/hex/hex_to_seg_tb.v src/hex/hex_to_seg.v
 src/hex/hex_to_seg_tb.vcd: src/hex/hex_to_seg_tb.vvp
 hex_to_seg_tb: src/hex/hex_to_seg_tb.vcd
+
+src/hex/hex_tb.vvp: src/hex/hex_tb.v src/hex/hex.v src/hex/hex_to_seg.v src/tm1637/tm1637.v
+src/hex/hex_tb.vcd: src/hex/hex_tb.vvp
+hex_tb: src/hex/hex_tb.vcd
 
 # ------ HELPERS ------
 clean:

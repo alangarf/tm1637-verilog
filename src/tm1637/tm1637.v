@@ -1,15 +1,12 @@
 module tm1637(
     clk,
     rst,
-
     data_latch,
-     data_byte,
+    data_in,
     data_stop_bit,
     busy,
-
     scl_en,
     scl_out,
-
     sda_en,
     sda_out,
     sda_in
@@ -18,7 +15,7 @@ module tm1637(
     input clk;
     input rst;
     input data_latch;
-    input [7:0] data_byte;
+    input [7:0] data_in;
     input data_stop_bit;
     input sda_in;
 
@@ -79,7 +76,7 @@ module tm1637(
         end else begin
             if (data_latch) begin
                 // data has been latch
-                write_byte <= data_byte;
+                write_byte <= data_in;
                 write_stop_bit <= data_stop_bit;
 
                 // let's rock!

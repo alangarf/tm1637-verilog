@@ -57,7 +57,6 @@ module top(
     reg hex_latch;
     reg [15:0] hex_data;
     reg hex_busy;
-    reg [7:0] debug;
 
     tm1637_hex hex_disp (
         clk,
@@ -71,9 +70,7 @@ module top(
         scl_out,
         sda_en,
         sda_out,
-        sda_in,
-
-        debug
+        sda_in
     );
 
     reg [4:0] counter;
@@ -95,7 +92,7 @@ module top(
 
         counter <= counter + 1;
 
-        leds <= debug;
+        leds <= 8'hFF;
     end
 
 endmodule
